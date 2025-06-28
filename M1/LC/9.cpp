@@ -1,10 +1,6 @@
 //
 // Created by JYY on 25-6-28.
 //
-
-//
-// Created by JYY on 25-6-26.
-//
 #include <vector>
 #include <iostream>
 
@@ -35,7 +31,7 @@ vector<int> sortedSquares(vector<int> &nums) {
 
 //https://leetcode.cn/problems/minimum-window-substring/description/
 int main() {
-    vector<int> vec = {-4, -1, 0, 1,2,3};
+    vector vec = {-4, -1, 0, 1,2,3};
     sortedSquares(vec);
     vec = {0};
     sortedSquares(vec);

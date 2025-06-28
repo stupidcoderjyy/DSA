@@ -7,52 +7,59 @@
 //
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 using namespace std;
 
-bool tryPick(int &f1, int &f2, int f) {
-    if (f1 == f || f2 == f) {
-        return true;
-    }
-    if (f1 < 0) {
-        f1 = f;
-        return true;
-    }
-    if (f2 < 0) {
-        f2 = f;
+bool pickFruit(unordered_map<int,int> &bk, int fruit) {
+    if (bk.size() < 2 || bk.find(fruit) != bk.end()) {
+        bk[fruit]++;
         return true;
     }
     return false;
 }
 
+void removeFruit(unordered_map<int,int> &bk, int fruit) {
+    if (bk.find(fruit) != bk.end()) {
+        if (--bk[fruit] == 0) {
+            bk.erase(fruit);
+        }
+    }
+}
+
+int totalSize(unordered_map<int,int> &bk) {
+    int total = 0;
+    for (auto &[f, n] : bk) {
+        total += n;
+    }
+    return total;
+}
+
 int totalFruit(vector<int> &fruits) {
     int l = 0, r = 0;
-    int f1 = -1, f2 = -1;
+    unordered_map<int,int> bk;
+    bk.reserve(2);
     int res = 0;
     while (true) {
         while (true) {
             if (r == fruits.size()) {
-                return max(res, r - l);
+                return max(res, totalSize(bk));
             }
-            if (tryPick(f1, f2, fruits[r])) {
+            if (pickFruit(bk, fruits[r])) {
                 r++;
             } else {
                 break;
             }
         }
-        res = max(res, r - l);
-        f1 = fruits[r];
-        f2 = fruits[r - 1];
-        l = r - 2;
+        res = max(res, totalSize(bk));
         while (true) {
-            if (tryPick(f1, f2, fruits[l])) {
-                l--;
-            } else {
+            if (bk.size() < 2) {
+                pickFruit(bk, fruits[r]);
+                r++;
                 break;
             }
+            removeFruit(bk, fruits[l++]);
         }
-        l++;
-        r++;
     }
 }
 
@@ -60,12 +67,16 @@ int totalFruit(vector<int> &fruits) {
 
 //https://leetcode.cn/problems/fruit-into-baskets/
 int main() {
-    vector<int> vec = {3, 3, 3, 1, 2, 1, 1, 2, 3, 3, 4};
+    vector vec = {1,2,1};
     test(totalFruit(vec));
-    vec = {1};
+    vec = {0,1,2,2};
     test(totalFruit(vec));
-    vec = {1, 1, 1};
+    vec = {1,2,3,2,2};
     test(totalFruit(vec));
-    vec = {1, 2};
+    vec = {3,3,3,1,2,1,1,2,3,3,4};
+    test(totalFruit(vec));
+    vec = {0,1,2,3};
+    test(totalFruit(vec));
+    vec = {0};
     test(totalFruit(vec));
 }
