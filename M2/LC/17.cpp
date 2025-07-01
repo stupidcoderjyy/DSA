@@ -5,7 +5,6 @@
 //https://leetcode.cn/problems/remove-linked-list-elements/
 
 #include <vector>
-#include <iostream>
 
 using namespace std;
 
