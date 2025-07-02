@@ -43,6 +43,7 @@ ListNode* buildList(const vector<int> &vec) {
     return header.next;
 }
 
+// https://leetcode.cn/problems/remove-linked-list-elements/description/
 int main() {
     auto node = buildList({1, 2, 6, 3, 4, 5, 6});
     removeElements(node, 6);

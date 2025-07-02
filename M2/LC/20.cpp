@@ -57,7 +57,7 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
     }
 }
 
-//https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/
+//https://leetcode.cn/problems/intersection-of-two-linked-lists/
 int main() {
     auto nodeA = buildList({4,1,8,4,5});
     auto nodeB = buildList({5,6,1});
