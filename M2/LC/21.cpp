@@ -30,24 +30,19 @@ ListNode *detectCycle(ListNode *head) {
         return nullptr;
     }
     ListNode *f = head, *s = head;
-    while (true) {
+    while (f != s) {
         if (!f->next || !f->next->next) {
             return nullptr;
         }
         f = f->next->next;
         s = s->next;
-        if (f == s) {
-            break;
-        }
     }
     f = head;
-    while (true) {
-        if (f == s) {
-            return f;
-        }
+    while (f != s) {
         f = f->next;
         s = s->next;
     }
+    return f;
 }
 
 //https://leetcode.cn/problems/linked-list-cycle-ii/
