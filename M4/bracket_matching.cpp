@@ -17,7 +17,7 @@ unordered_map<char, char> pairs{
 bool match(const string& s) {
     stack<char> st;
     for (auto &c: s) {
-        if (pairs.find(c) != pairs.end()) {
+        if (pairs.contains(c)) {
             st.push(c);
         } else {
             if (st.empty() || pairs[st.top()] != c) {
