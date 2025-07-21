@@ -70,7 +70,23 @@ void postOrder(const Node* node) {
     }
 }
 
-void traverse(const Node* node) {
+void levelOrder(Node* root) {
+    deque<Node*> deque;
+    deque.push_front(root);
+    while (!deque.empty()) {
+        auto* node = deque.back();
+        deque.pop_back();
+        cout << node->val << " ";
+        if (node->lChild) {
+            deque.push_front(node->lChild);
+        }
+        if (node->rChild) {
+            deque.push_front(node->rChild);
+        }
+    }
+}
+
+void traverse(Node* node) {
     cout << "preOrder:\t";
     preOrder(node);
     cout << endl;
@@ -79,6 +95,9 @@ void traverse(const Node* node) {
     cout << endl;
     cout << "postOrder:\t";
     postOrder(node);
+    cout << endl;
+    cout << "levelOrder:\t";
+    levelOrder(node);
     cout << endl;
 }
 
