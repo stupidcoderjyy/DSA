@@ -30,18 +30,18 @@ Node* buildTree(string s) {
     auto it = s.begin();
     auto* root = new Node(*it++);
     deque.push_front(root);
-    while (!deque.empty()) {
+    while (it != s.end()) {
         auto node = deque.back();
         deque.pop_back();
         auto* left = buildNode(s, it);
         auto* right = buildNode(s, it);
+        deque.push_front(left);
+        deque.push_front(right);
         if (!node) {
             continue;
         }
         node->lChild = left;
         node->rChild = right;
-        deque.push_front(left);
-        deque.push_front(right);
     }
     return root;
 }
@@ -102,6 +102,6 @@ void traverse(Node* node) {
 }
 
 int main() {
-    auto* root = buildTree("1 23 x4x5 xx6");
+    auto* root = buildTree("1 x2 xx3x xxxxx4");
     traverse(root);
 }

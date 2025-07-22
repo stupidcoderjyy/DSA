@@ -22,9 +22,7 @@ Node* fromPreAndInOrder(const string& preorder, const string& inorder) {
     }
     auto ch = preorder[0];
     auto* node = new Node(ch);
-    auto m = inorder.find(ch);
-    auto l1 = m;
-    auto l2 = inorder.length() - m - 1;
+    auto m = inorder.find(ch), l1 = m, l2 = inorder.length() - m - 1;
     node->lChild = fromPreAndInOrder(preorder.substr(1, l1), inorder.substr(0, l1));
     node->rChild = fromPreAndInOrder(preorder.substr(1 + l1, l2), inorder.substr(m + 1, l2));
     return node;

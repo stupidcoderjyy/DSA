@@ -13,7 +13,7 @@ struct Node {
     Node *lChild{}, *rChild{};
     Node(): val() {}
     explicit Node(char val): val(val) {}
-    bool lTag{}, rTag{};
+    bool hasPrev{}, hasNext{};
 };
 
 Node* buildNode(string& s, string::iterator& it) {
@@ -30,70 +30,70 @@ Node* buildTree(string s) {
     auto it = s.begin();
     auto* root = new Node(*it++);
     deque.push_front(root);
-    while (!deque.empty()) {
+    while (it != s.end()) {
         auto node = deque.back();
         deque.pop_back();
         auto* left = buildNode(s, it);
         auto* right = buildNode(s, it);
+        deque.push_front(left);
+        deque.push_front(right);
         if (!node) {
             continue;
         }
         node->lChild = left;
         node->rChild = right;
-        deque.push_front(left);
-        deque.push_front(right);
     }
     return root;
 }
 
-void inThreadTree(Node* node, Node*& pre) {
+void inThreadTree(Node* node, Node*& prev) {
     if (!node) {
         return;
     }
-    inThreadTree(node->lChild, pre);
+    inThreadTree(node->lChild, prev);
     //设置前驱
     if (!node->lChild) {
-        node->lChild = pre;
-        node->lTag = true;
+        node->lChild = prev;
+        node->hasPrev = true;
     }
     //设置后继
-    if (pre && !pre->rChild) {
-        pre->rChild = node;
-        pre->rTag = true;
+    if (!node->rChild) {
+        node->hasNext = true;
     }
-    pre = node;
-    inThreadTree(node->rChild, pre);
+    if (prev && prev->hasNext) {
+        prev->rChild = node;
+    }
+    prev = node;
+    inThreadTree(node->rChild, prev);
 }
 
 Node* firstNode(Node* p) {
     if (!p) {
         return nullptr;
     }
-    while (!p->lTag) {
+    //最左侧的，没有左子树的结点
+    while (!p->hasPrev) {
         p = p->lChild;
     }
     return p;
 }
 
 Node* nextNode(Node* p) {
-    if (!p->rTag) {
-        return firstNode(p->rChild);
-    }
-    return p->rChild;
+    //一定是右子树的第一个结点
+    return p->hasNext ? p->rChild : firstNode(p->rChild);
 }
 
 Node* lastNode(Node* p) {
-    while (!p->rTag) {
+    //最右侧的，没有右子树的结点
+    while (!p->hasNext) {
         p = p->rChild;
     }
     return p;
 }
 
 Node* prevNode(Node* p) {
-    if (p->lTag) {
-        return lastNode(p->lChild);
-    }
-    return p->lChild;
+    //一定是左子树的最后一个结点
+    return p->hasPrev ? p->lChild : lastNode(p->lChild);
 }
 
 void inOrder(Node* root) {
