@@ -86,7 +86,7 @@ void levelOrder(Node* root) {
     }
 }
 
-void traverse(Node* node) {
+void traverse(TreeNode* node) {
     cout << "preOrder:\t";
     preOrder(node);
     cout << endl;
