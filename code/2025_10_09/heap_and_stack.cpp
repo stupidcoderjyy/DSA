@@ -4,15 +4,15 @@
 
 #include <iostream>
 
-void alloc_on_stack() {
-    int arr[] = {1,2,3,4,5};
+void AllocOnStack() {
+    int arr[] = {1, 2, 3, 4, 5};
     for (int i : arr) {
         std::cout << i << " ";
     }
     std::cout << std::endl;
 }
 
-void alloc_on_heap() {
+void AllocOnHeap() {
     auto arr = new int[5];
     for (int i = 0; i < 5; ++i) {
         std::cin >> arr[i];
@@ -25,6 +25,6 @@ void alloc_on_heap() {
 }
 
 int main() {
-    alloc_on_heap();
-    alloc_on_stack();
+    AllocOnHeap();
+    AllocOnStack();
 }

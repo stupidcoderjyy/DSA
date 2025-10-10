@@ -8,11 +8,8 @@
 using std::stack;
 
 class MyQueue {
-private:
-    stack<int> st1, st2;
 public:
-    MyQueue() {
-    }
+    MyQueue() = default;
 
     void push(int x) {
         st1.push(x);
@@ -37,6 +34,8 @@ public:
     bool empty() {
         return st1.empty() && st2.empty();
     }
+private:
+    stack<int> st1, st2;
 };
 
 int main() {
