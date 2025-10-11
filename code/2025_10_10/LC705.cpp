@@ -29,11 +29,20 @@ void remove_node(const Node* node) {
     }
 }
 
-#define LEN 128
-
 class MyHashSet {
 public:
     MyHashSet() = default;
+
+    ~MyHashSet() {
+        for (auto node : data) {
+            auto* n = node.next;
+            while (n) {
+                auto* next = n->next;
+                delete n;
+                n = next;
+            }
+        }
+    }
 
     void add(int key) {
         Node* n;
@@ -55,6 +64,7 @@ public:
         return locate(key, n);
     }
 private:
+    static constexpr int LEN = 128;
     Node data[LEN];
 
     bool locate(int key, Node*& node) {

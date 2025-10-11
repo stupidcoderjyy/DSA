@@ -33,15 +33,15 @@ void remove(const Node* node) {
 //维护一个双向链表，最新访问的值在头部，尾部就是需要被淘汰的值
 class LRUCache {
 public:
-    explicit LRUCache(int capacity): capacity(capacity) {
-        head = new Node;
-        tail = new Node;
-        head->next = tail;
-        tail->prev = head;
+    explicit LRUCache(int capacity): capacity_(capacity) {
+        head_ = new Node;
+        tail_ = new Node;
+        head_->next = tail_;
+        tail_->prev = head_;
     }
 
     ~LRUCache() {
-        auto* n = head;
+        auto* n = head_;
         while (n) {
             auto* next = n->next;
             delete n;
@@ -50,8 +50,8 @@ public:
     }
 
     int get(int key) {
-        auto it = data.find(key);
-        if (it == data.end()) {
+        auto it = data_.find(key);
+        if (it == data_.end()) {
             return -1;
         }
         auto* node = it->second;
@@ -60,14 +60,14 @@ public:
     }
 
     void put(int key, int value) {
-        auto it = data.find(key);
+        auto it = data_.find(key);
         Node* node;
-        if (it == data.end()) {
-            if (data.size() == capacity) {
+        if (it == data_.end()) {
+            if (data_.size() == capacity_) {
                 expire_data();
             }
             node = new Node(key, value);
-            data[key] = node;
+            data_[key] = node;
         } else {
             node = it->second;
             node->value = value;
@@ -75,18 +75,18 @@ public:
         access_data(node);
     }
 private:
-    Node *head, *tail;
-    int capacity;
-    std::unordered_map<int, Node*> data;
+    Node *head_, *tail_;
+    int capacity_;
+    std::unordered_map<int, Node*> data_;
 
     void access_data(Node* node) const {
         remove(node);
-        insert(head, node);
+        insert(head_, node);
     }
 
     void expire_data() {
-        auto* node = tail->prev;
-        data.erase(node->key);
+        auto* node = tail_->prev;
+        data_.erase(node->key);
         remove(node);
         delete node;
     }
