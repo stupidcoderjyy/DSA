@@ -11,9 +11,6 @@
 
 using std::string;
 
-#define cti(x) (x - '0')
-#define itc(x) static_cast<char>(x + '0')
-
 //时间复杂度：O(mn) 空间复杂度：O(m+n)
 string multiply(string num1, string num2) {
     std::reverse(num1.begin(), num1.end());
@@ -24,11 +21,11 @@ string multiply(string num1, string num2) {
     //模拟竖式
     for (int i = 0; i < num1.length(); ++i) {
         for (int j = 0; j < num2.length(); ++j) {
-            int v = r + cti(num[i + j]) + cti(num1[i]) * cti(num2[j]);
-            num[i + j] = itc(v % 10);
+            int v = r + (num[i + j] - '0') + (num1[i] - '0') * (num2[j] - '0');
+            num[i + j] = static_cast<char>(v % 10 + '0');
             r = v / 10;
         }
-        num[i + num2.length()] = itc(r);
+        num[i + num2.length()] = static_cast<char>(r + '0');
         r = 0;
     }
     //删除末尾的0
