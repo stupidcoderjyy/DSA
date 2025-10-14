@@ -43,4 +43,5 @@ int main() {
     std::cout << multiply("1", "2") << std::endl;
     std::cout << multiply("456", "9999") << std::endl;
     std::cout << multiply("9999", "456") << std::endl;
+    return 0;
 }

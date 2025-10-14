@@ -42,4 +42,5 @@ int main() {
         }
         std::cout << longestCommonPrefix(vec) << std::endl;
     }
+    return 0;
 }

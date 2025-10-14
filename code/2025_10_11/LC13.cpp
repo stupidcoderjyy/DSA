@@ -41,4 +41,5 @@ int main() {
     std::cout << romanToInt("I") << std::endl;
     std::cout << romanToInt("MCMXCIV") << std::endl;
     std::cout << romanToInt("LVIII") << std::endl;
+    return 0;
 }

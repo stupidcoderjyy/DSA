@@ -59,4 +59,5 @@ int main() {
     Student s("s1", 10, 1);
     s.set_student_id(2);
     std::cout << s.name() << " " << s.age() << " " << s.student_id() << std::endl;
+    return 0;
 }

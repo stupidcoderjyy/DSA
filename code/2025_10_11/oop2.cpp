@@ -38,4 +38,5 @@ int main() {
         shape->draw();
         delete shape;
     }
+    return 0;
 }

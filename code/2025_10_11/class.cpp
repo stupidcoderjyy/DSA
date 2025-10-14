@@ -7,15 +7,15 @@
 
 class Student {
 public:
-    Student(const std::string &name, int age, const std::string &id)
-        : name_(name), age_(age), id_(id) {
+    Student(std::string name, int age, const std::string &id)
+        : name_(std::move(name)), age_(age), id_(id) {
     }
 
     void Display() const {
         std::cout << name_ << " " << age_ << " " << id_ << std::endl;
     }
 
-    std::string name() const {
+    const std::string& name() const {
         return name_;
     }
 
@@ -51,4 +51,5 @@ int main() {
     b.set_name("BBB");
     a.Display();
     b.Display();
+    return 0;
 }
