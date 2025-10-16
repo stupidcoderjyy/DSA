@@ -5,27 +5,28 @@
 #include <iostream>
 
 enum class Color {
-    RED, GREEN, BLUE
+    Red, Green, Blue
 };
 
 std::string ColorToString(Color c) {
     switch (c) {
-        case Color::RED:
+        case Color::Red:
             return "RED";
-        case Color::GREEN:
+        case Color::Green:
             return "GREEN";
-        case Color::BLUE:
+        case Color::Blue:
             return "BLUE";
+        default:
+            return "";
     }
-    return "";
 }
 
 int main() {
     // GREEN具有Color类作用域
     // Color c = GREEN;   error: 'GREEN' was not declared in this scope
-    std::cout << static_cast<int>(Color::GREEN) << std::endl;
+    std::cout << static_cast<int>(Color::Green) << std::endl;
 
-    for (const auto& c : {Color::RED, Color::BLUE, Color::GREEN}) {
+    for (const auto& c : {Color::Red, Color::Blue, Color::Green}) {
         std::cout << ColorToString(c) << '\n';
     }
     return 0;

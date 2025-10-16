@@ -7,25 +7,9 @@
 
 using std::vector;
 
-int partition(vector<int>& vec, int l, int r);
-void quick_sort(vector<int>& vec, int l, int r);
-
 //不稳定
 //最好|最坏|平均时间复杂度：O(N)|O(N^2)|O(NlogN)  最好|最坏|平均空间复杂度O(logN)|O(N)|O(logN)
-void QuickSort(vector<int>& vec) {
-    quick_sort(vec, 0, vec.size() - 1);
-}
-
-void quick_sort(vector<int>& vec, int l, int r) {
-    if (l >= r) {
-        return;
-    }
-    int pivot = partition(vec, l, r);
-    quick_sort(vec, l, pivot - 1);
-    quick_sort(vec, pivot + 1, r);
-}
-
-int partition(vector<int>& vec, int l, int r) {
+int Partition(vector<int>& vec, int l, int r) {
     int pivot_num = vec[l];
     //以pivot_num为界将vec分成2组
     while (l < r) {
@@ -48,6 +32,19 @@ int partition(vector<int>& vec, int l, int r) {
     }
     vec[l] = pivot_num;
     return l;
+}
+
+void QuickSort(vector<int>& vec, int l, int r) {
+    if (l >= r) {
+        return;
+    }
+    int pivot = Partition(vec, l, r);
+    QuickSort(vec, l, pivot - 1);
+    QuickSort(vec, pivot + 1, r);
+}
+
+void QuickSort(vector<int>& vec) {
+    QuickSort(vec, 0, vec.size() - 1);
 }
 
 int main() {
