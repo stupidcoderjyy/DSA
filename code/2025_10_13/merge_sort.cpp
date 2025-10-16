@@ -34,11 +34,11 @@ void merge(vector<int> &vec, int m, int l, int r) {
         //这里采用<=保证稳定性
         temp[k++] = vec[i] <= vec[j] ? vec[i++] : vec[j++];
     }
-    while (i <= m) {
-        temp[k++] = vec[i++];
+    if (i <= m) {
+        std::copy(vec.begin() + i, vec.begin() + m + 1, temp.begin() + k);
     }
-    while (j <= r) {
-        temp[k++] = vec[j++];
+    if (j <= r) {
+        std::copy(vec.begin() + j, vec.begin() + r + 1, temp.begin() + k);
     }
     std::copy(temp.begin(), temp.end(), vec.begin() + l);
 }
