@@ -18,7 +18,7 @@ int main() {
     };
     int arr[] = {1, 2, 3, 4, 5};
     Process(arr, 5, f);
-    for (int num : arr) {
+    for (const int& num : arr) {
         std::cout << num << ' ';
     }
     std::cout << std::endl;

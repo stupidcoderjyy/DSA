@@ -5,7 +5,8 @@
 #include <iostream>
 
 int* FindMax(int arr[], int len) {
-    int* p = arr, max = INT_MIN, *p_max = nullptr;
+    int max = INT_MIN;
+    int *p = arr, *p_max = nullptr;
     for (int i = 0; i < len; ++i) {
         if (*p > max) {
             max = *p;

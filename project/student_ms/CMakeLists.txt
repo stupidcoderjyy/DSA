@@ -9,4 +9,8 @@ add_executable(MS
         Manager.cpp
         Student.h
         Student.cpp
+        Log.h
+        Log.cpp
+        Util.h
+        Util.cpp
 )

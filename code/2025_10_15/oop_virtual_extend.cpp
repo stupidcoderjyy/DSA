@@ -4,13 +4,13 @@
 
 class Vehicle {
 public:
-    explicit Vehicle(int color): color(color) {}
+    explicit Vehicle(int color): color_(color) {}
 
     int get_color() const {
-        return color;
+        return color_;
     }
 private:
-    int color;
+    int color_;
 };
 
 class Car : public Vehicle {

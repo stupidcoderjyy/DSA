@@ -18,7 +18,8 @@ public:
         return os << obj.rez << ',' << obj.imz << std::endl;
     }
 private:
-    double rez, imz;
+    double rez;
+    double imz;
 };
 
 int main() {
