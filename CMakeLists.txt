@@ -6,7 +6,5 @@ add_subdirectory(project/student_ms)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(DSA
-        code/2025_10_07/header_and_source/math_utils.h
-        code/2025_10_07/header_and_source/math_utils.cpp
-        code/2025_10_07/header_and_source/main.cpp
+        code/2025_10_17/dynamic_cast.cpp
 )
