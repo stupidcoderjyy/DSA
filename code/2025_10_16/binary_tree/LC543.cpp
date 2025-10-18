@@ -23,20 +23,20 @@ struct TreeNode {
 };
 
 //时间复杂度O(N) 最差|最好|平均空间复杂度O(N)|O(logN)|O(logN)
-int MaxDepth(TreeNode* node, int& maxD) {
+int MaxDepth(TreeNode* node, int& max_depth) {
     if (!node) {
         return 0;
     }
-    int left = MaxDepth(node->left, maxD);
-    int right = MaxDepth(node->right, maxD);
-    maxD = std::max(maxD, left + right);
+    int left = MaxDepth(node->left, max_depth);
+    int right = MaxDepth(node->right, max_depth);
+    max_depth = std::max(max_depth, left + right);
     return std::max(left, right) + 1;
 }
 
 int diameterOfBinaryTree(TreeNode* root) {
-    int maxD = 0;
-    MaxDepth(root, maxD);
-    return maxD;
+    int max_depth = 0;
+    MaxDepth(root, max_depth);
+    return max_depth;
 }
 
 TreeNode* BuildNode(const vector<int>& vec, vector<int>::const_iterator& it) {

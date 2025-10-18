@@ -6,6 +6,7 @@
 
 class Base {
 public:
+    virtual ~Base() = default;
     virtual void Func() {
         std::cout << "Base" << std::endl;
     }

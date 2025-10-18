@@ -10,6 +10,7 @@ struct TreeNode {
     explicit TreeNode(int val) : val(val), left(), right() {}
 };
 
+//时间复杂度O(N) 最差|最好|平均空间复杂度O(N)|O(logN)|O(logN)
 int maxDepth(TreeNode* root) {
     if (!root) {
         return 0;

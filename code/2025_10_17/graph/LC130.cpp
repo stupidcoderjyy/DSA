@@ -3,11 +3,10 @@
 //
 
 #include <vector>
-#include <cstring>
-#include <iostream>
 
 using std::vector;
 
+//时间复杂度O(MN) 最坏空间复杂度O(MN)
 void VisitArea(int i, int j, vector<vector<char>>& grid, int width, int height) {
     if (i < 0 || i >= height || j < 0 || j >= width) {
         return;
@@ -23,6 +22,7 @@ void VisitArea(int i, int j, vector<vector<char>>& grid, int width, int height) 
 
 void solve(vector<vector<char>>& grid) {
     int height = grid.size(), width = grid[0].size();
+    //从边界开始，遍历所有0，标记为#
     for (int i = 0; i < height; ++i) {
         if (grid[i][0] == 'O') {
             VisitArea(i, 0, grid, width, height);
@@ -39,16 +39,12 @@ void solve(vector<vector<char>>& grid) {
             VisitArea(height - 1, j, grid, width, height);
         }
     }
+    //将内部的O替换为X, 将#替换成O
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             if (grid[i][j] == 'O') {
                 grid[i][j] = 'X';
-            }
-        }
-    }
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            if (grid[i][j] == '#') {
+            } else if (grid[i][j] == '#') {
                 grid[i][j] = 'O';
             }
         }
@@ -56,7 +52,6 @@ void solve(vector<vector<char>>& grid) {
 }
 
 int main() {
-//    vector<vector<char>> grid{{'X','X','X','X'},{'X','O','O','X'},{'X','X','O','X'},{'X','O','X','X'}};
     vector<vector<char>> grid{
         {'O','X','X','O','X'},
         {'X','O','O','X','O'},

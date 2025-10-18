@@ -15,9 +15,10 @@ public:
     Node* right;
     Node* next;
     Node() : val(0), left(), right(), next() {}
-    Node(int _val) : val(_val), left(), right(), next() {}
+    explicit Node(int _val) : val(_val), left(), right(), next() {}
 };
 
+//层序遍历 时间复杂度O(N) 空间复杂度O(logN)
 Node* connect(Node* root) {
     vector<int> result;
     if (!root) {

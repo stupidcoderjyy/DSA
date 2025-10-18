@@ -77,6 +77,6 @@ int main() {
     n1->right->right->left = n2;
     std::cout << maxPathSum(n1) << std::endl;
     std::cout << maxPathSum(BuildTree({-10,9,20,-99,-99,15,7})) << std::endl;
-    std::cout << maxPathSum(BuildTree({6, -1, -2, 9, -99, -99, 3})) << std::endl;
+    std::cout << maxPathSum(BuildTree({6,-1,-2,9,-99,-99,3})) << std::endl;
     return 0;
 }
