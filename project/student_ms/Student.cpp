@@ -4,9 +4,9 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <iomanip>
 
 #include "Student.h"
-#include "Util.h"
 
 namespace ms {
 
@@ -53,8 +53,13 @@ namespace ms {
         }
     }
 
-    std::string Student::ToString() const {
-        return PrintString("id: %s, name: %s, age: %d, score: %.1f, class: %s", id_, name_, age_, score_, get_clazz().c_str());
+    std::ostream& operator<<(std::ostream &os, const Student &obj) {
+        os << std::setw(Student::kIdSize) << std::left << obj.get_id();
+        os << std::setw(Student::kNameSize) << std::left << obj.get_name();
+        os << std::setw(5) << std::left << obj.get_age();
+        os << std::setw(5) << std::left << obj.get_score();
+        os << std::setw(5) << std::left << obj.get_clazz();
+        return os;
     }
 
     Student* Student::Create(const std::string &id, const std::string &name, int age, float score, const std::string& clazz) {

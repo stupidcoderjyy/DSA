@@ -5,6 +5,7 @@
 #ifndef DSA_STUDENT_H
 #define DSA_STUDENT_H
 
+#include <ostream>
 #include <string>
 
 namespace ms {
@@ -24,7 +25,7 @@ namespace ms {
         std::string get_clazz() const;
         void set_clazz(const std::string& new_clazz);
 
-        std::string ToString() const;
+        friend std::ostream & operator<<(std::ostream &os, const Student &obj);
         static Student* Create(const std::string &id, const std::string &name, int age, float score, const std::string& clazz);
     private:
 

@@ -11,6 +11,4 @@ add_executable(MS
         Student.cpp
         Log.h
         Log.cpp
-        Util.h
-        Util.cpp
 )

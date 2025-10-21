@@ -5,12 +5,39 @@
 #ifndef DSA_LOG_H
 #define DSA_LOG_H
 
+#include <iostream>
+#include <fstream>
+
 namespace ms {
 
-    class Log {
+    class Buf : public std::streambuf {
     public:
-        void Info(const char* format, ...);
-        void Error(const char* format, ...);
+        explicit Buf(std::ofstream& file_path);
+    protected:
+        int overflow(int c) override;
+        std::streamsize xsputn(const char* s, std::streamsize n) override;
+    private:
+        std::ostream& std_out_;
+        std::ofstream& file_out_;
+    };
+
+    class Log : public std::ostream {
+    public:
+        explicit Log(const std::string& file_path);
+        ~Log() override;
+    private:
+        std::ofstream file_out_;
+        Buf buf_;
+    };
+
+    class Logger {
+    public:
+        explicit Logger(const std::string& file_path);
+        std::ostream& info();
+        std::ostream& error();
+    private:
+        Log log_;
+        void PrintTime();
     };
 
 }
