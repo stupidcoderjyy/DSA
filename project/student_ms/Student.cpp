@@ -10,9 +10,15 @@
 
 namespace ms {
 
-    Student::Student() : age_(), score_(), clazz_() {}
+    Student::Student() : age_(), score_(), clazz_() {
+        allocated++;
+    }
 
-    void Student::set_id(const std::string &new_id) {
+    Student::~Student() {
+        allocated--;
+    }
+
+    void Student::set_id(KStrRef new_id) {
         if (new_id.size() > kIdSize) {
             throw std::runtime_error("invalid id: '" + new_id + "'");
         }
@@ -20,7 +26,7 @@ namespace ms {
         strncpy(this->id_, new_id.c_str(), new_id.size());
     }
 
-    void Student::set_name(const std::string &new_name) {
+    void Student::set_name(KStrRef new_name) {
         if (new_name.size() > kNameSize) {
             throw std::runtime_error("invalid name: '" + new_name + "'");
         }
@@ -41,7 +47,7 @@ namespace ms {
         }
     }
 
-    void Student::set_clazz(const std::string &new_clazz) {
+    void Student::set_clazz(KStrRef new_clazz) {
         if (new_clazz == "A") {
             clazz_ = Class::A;
         } else if (new_clazz == "B") {
@@ -54,20 +60,44 @@ namespace ms {
     }
 
     std::ostream& operator<<(std::ostream &os, const Student &obj) {
-        os << std::setw(Student::kIdSize) << std::left << obj.get_id();
-        os << std::setw(Student::kNameSize) << std::left << obj.get_name();
-        os << std::setw(5) << std::left << obj.get_age();
-        os << std::setw(5) << std::left << obj.get_score();
-        os << std::setw(5) << std::left << obj.get_clazz();
+        char score_ch[10];
+        sprintf(score_ch, "%.f", obj.get_score());
+        Student::Print(os,
+            obj.get_id(),
+            obj.get_name(),
+            std::to_string(obj.get_age()),
+            std::string(score_ch),
+            obj.get_clazz());
         return os;
     }
 
-    Student* Student::Create(const std::string &id, const std::string &name, int age, float score, const std::string& clazz) {
+    void Student::Print(std::ostream &os, KStrRef id, KStrRef name, KStrRef age, KStrRef score, KStrRef clazz) {
+        os << std::setw(kIdSize) << std::left << id;
+        os << std::setw(kNameSize) << std::left << name;
+        os << std::setw(7) << std::left << age;
+        os << std::setw(10) << std::left << score;
+        os << std::setw(10) << std::left << clazz;
+    }
+
+    void Student::PrintTitle(std::ostream &os) {
+        Print(os, "ID", "NAME", "AGE", "SCORE", "CLASS");
+    }
+
+    void Student::PrintStudents(std::ostream &os, const std::vector<Student *> &students) {
+        os << '\n';
+        PrintTitle(os);
+        for (auto s : students) {
+            os << '\n' << *s;
+        }
+        os << std::endl;
+    }
+
+    Student* Student::Create(KStrRef id, KStrRef name, KStrRef age, KStrRef score, KStrRef clazz) {
         Student* s = nullptr;
         try {
             s = new Student;
             s->set_id(id);
-            s->set_name(id);
+            s->set_name(name);
             s->set_age(age);
             s->set_score(score);
             s->set_clazz(clazz);
@@ -77,5 +107,7 @@ namespace ms {
         }
         return s;
     }
+
+    int Student::allocated{};
 
 }

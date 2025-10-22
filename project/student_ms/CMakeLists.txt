@@ -11,4 +11,6 @@ add_executable(MS
         Student.cpp
         Log.h
         Log.cpp
+        Programme.h
+        Programme.cpp
 )

@@ -6,7 +6,6 @@
 #define DSA_MANAGER_H
 
 #include <functional>
-#include <unordered_map>
 #include <vector>
 
 #include "Log.h"
@@ -14,35 +13,47 @@
 
 namespace ms {
 
+    typedef std::vector<Student*> StuVec;
+
     class StudentManager {
     public:
-        StudentManager();
+        explicit StudentManager(Logger& logger);
         ~StudentManager();
-        void Load(const std::string& file);
-        void Create(const std::string &id, const std::string &name, int age, float score, const std::string& clazz);
-        void Remove(const std::string &id);
-        void Modify(const std::string &id, const std::string& key, const std::string& val);
-        void Search(const std::string& type, const std::function<void(std::vector<Student*>)>& consumer);
-    private:
-        static void ModifyName(Student* s, const std::string& val);
-        static void ModifyAge(Student* s, const std::string& val);
-        static void ModifyScore(Student* s, const std::string& val);
-        static void ModifyClazz(Student* s, const std::string& val);
-        Logger log;
-        std::vector<Student*> students_;
+        void Load(KStrRef file);
+        void Create(KStrRef id, KStrRef name, KStrRef age, KStrRef score, KStrRef clazz);
+        void Remove(KStrRef id);
+        void Modify(KStrRef id, KStrRef key, KStrRef val);
+        void Search(KStrRef type, KStrRef arg) const;
+        void Sort(KStrRef type, bool print);
         void Close();
-        void Save() const;
+        void Save();
+        void Print() const;
+    private:
+        static void ModifyName(Student* s, KStrRef val);
+        static void ModifyAge(Student* s, KStrRef val);
+        static void ModifyScore(Student* s, KStrRef val);
+        static void ModifyClazz(Student* s, KStrRef val);
+        Logger& log_;
+        StuVec students_;
+        bool dirty_;
     };
 
     class Searcher {
-    public:
-        typedef std::vector<Student*> StuVec;
-        static StuVec SearchBy(const StuVec& src, const std::string& type, const std::string& key);
+        friend class StudentManager;
     private:
-        static StuVec SearchById(const StuVec& src, const std::string& key);
-        static StuVec SearchByName(const StuVec& src, const std::string& key);
-        static StuVec SearchByScore(const StuVec& src, const std::string& key);
-        static StuVec SearchByClass(const StuVec& src, const std::string& key);
+        typedef std::function<bool(const Student&, KStrRef arg)> Predicate;
+        static StuVec SearchBy(const StuVec& src, KStrRef type, KStrRef key);
+        static StuVec Collect(const StuVec& src, KStrRef arg, const Predicate& pred);
+        static StuVec SearchById(const StuVec& src, KStrRef key);
+        static StuVec SearchByName(const StuVec& src, KStrRef key);
+        static StuVec SearchByScore(const StuVec& src, KStrRef key);
+        static StuVec SearchByClass(const StuVec& src, KStrRef key);
+    };
+
+    class Sorter {
+        friend class StudentManager;
+    private:
+         static void SortBy(StuVec& src, KStrRef type);
     };
 
 }

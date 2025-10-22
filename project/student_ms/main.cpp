@@ -2,12 +2,8 @@
 // Created by PC on 2025/10/17.
 //
 
-#include "Log.h"
-
+#include "Programme.h"
 
 int main() {
-    {
-        ms::Logger log("test_log.txt");
-        log.info() << "deaws" << std::endl;
-    }
+    ms::Programme().Exec();
 }

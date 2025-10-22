@@ -12,19 +12,19 @@
 
 namespace ms {
 
-    Buf::Buf(std::ofstream& file_out): std_out_(std::cout), file_out_(file_out) {
+    Buf::Buf(std::ofstream& file_out): std_out_(&std::cout), file_out_(file_out) {
     }
 
     int Buf::overflow(int c) {
         if (c != EOF) {
             file_out_.put(static_cast<char>(c));
-            std_out_.put(static_cast<char>(c));
+            std_out_->put(static_cast<char>(c));
         }
         return c;
     }
 
     std::streamsize Buf::xsputn(const char *s, std::streamsize n) {
-        std_out_.write(s, n);
+        std_out_->write(s, n);
         file_out_.write(s, n);
         return n;
     }
@@ -38,19 +38,24 @@ namespace ms {
 
     Log::~Log() {
         file_out_.flush();
+        file_out_.close();
     }
 
     Logger::Logger(const std::string &file_path): log_(file_path) {
     }
 
-    std::ostream& Logger::info() {
+    std::ostream& Logger::Info() {
         PrintTime();
         return log_ << "[info]";
     }
 
-    std::ostream& Logger::error() {
+    std::ostream& Logger::Error() {
         PrintTime();
         return log_ << "[error]";
+    }
+
+    std::ostream & Logger::PlainText() {
+        return log_;
     }
 
     void Logger::PrintTime() {

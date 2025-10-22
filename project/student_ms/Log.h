@@ -17,7 +17,7 @@ namespace ms {
         int overflow(int c) override;
         std::streamsize xsputn(const char* s, std::streamsize n) override;
     private:
-        std::ostream& std_out_;
+        std::ostream* std_out_;
         std::ofstream& file_out_;
     };
 
@@ -33,8 +33,9 @@ namespace ms {
     class Logger {
     public:
         explicit Logger(const std::string& file_path);
-        std::ostream& info();
-        std::ostream& error();
+        std::ostream& Info();
+        std::ostream& Error();
+        std::ostream& PlainText();
     private:
         Log log_;
         void PrintTime();

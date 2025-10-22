@@ -11,18 +11,20 @@
 #include "Manager.h"
 
 #include <algorithm>
+#include <iomanip>
 
 namespace ms {
 
-    StudentManager::StudentManager(): log("system.log") {
+    StudentManager::StudentManager(Logger& logger): log_(logger) {
         Load("students.dat");
+        dirty_ = false;
     }
 
     StudentManager::~StudentManager() {
         Close();
     }
 
-    void StudentManager::Load(const std::string& file) {
+    void StudentManager::Load(KStrRef file) {
         std::ifstream is(file, std::ios::binary);
         if (is.peek() == EOF) {
             return;
@@ -35,42 +37,46 @@ namespace ms {
             is.read(p, sizeof(Student));
             auto* s = reinterpret_cast<Student*>(p);
             students_.push_back(s);
+            Student::allocated++;
         }
+        dirty_ = true;
+        log_.Info() << "Loaded " << size << " records" << std::endl;
     }
 
-    void StudentManager::Create(const std::string &id, const std::string &name, int age, float score, const std::string& clazz) {
-        try {
-            auto it = std::ranges::find_if(students_, [&](Student* s) {
-                return s->get_id() == id;
-            });
-            if (it != students_.end()) {
-                throw std::runtime_error("id '" + id + "' has already been registered");
-            }
-            auto* s = Student::Create(id, name, age, score, clazz);
-            students_.push_back(s);
-            log.info() << "registered: " << '\n' << s << std::endl;
-        } catch (std::runtime_error& e) {
-            log.error() << "failed to register: " << e.what() << std::endl;
+    void StudentManager::Create(KStrRef id, KStrRef name, KStrRef age, KStrRef score, KStrRef clazz) {
+        auto it = std::ranges::find_if(students_, [&](Student* s) {
+            return s->get_id() == id;
+        });
+        if (it != students_.end()) {
+            throw std::runtime_error("id '" + id + "' has already been registered");
         }
+        auto* s = Student::Create(id, name, age, score, clazz);
+        students_.push_back(s);
+        dirty_ = true;
+        auto& log = log_.Info();
+        log << "registered: " << '\n';
+        Student::PrintTitle(log);
+        log << '\n' << *s << std::endl;
     }
 
-    void StudentManager::Remove(const std::string &id) {
-        try {
-            auto it = std::ranges::find_if(students_, [&](Student* s) {
-                return s->get_id() == id;
-            });
-            if (it == students_.end()) {
-                throw std::runtime_error("id '" + id + "' not found");
-            }
-            students_.erase(it);
-            log.info() << "removed: '" << id << "'" << std::endl;
-        } catch (std::runtime_error& e) {
-            log.error() << "failed to remove: " << e.what() << std::endl;
+    void StudentManager::Remove(KStrRef id) {
+        auto it = std::ranges::find_if(students_, [&](Student* s) {
+            return s->get_id() == id;
+        });
+        if (it == students_.end()) {
+            throw std::runtime_error("id '" + id + "' not found");
         }
+        auto* s = *it;
+        students_.erase(it);
+        dirty_ = true;
+        auto& log = log_.Info();
+        log << "removed: ";
+        Student::PrintStudents(log, {s});
+        delete s;
     }
 
-    void StudentManager::Modify(const std::string &id, const std::string& key, const std::string &val) {
-        static std::unordered_map<std::string,  void (*)(Student*, const std::string&)> handlers = {
+    void StudentManager::Modify(KStrRef id, KStrRef key, KStrRef val) {
+        static std::unordered_map<std::string,  void (*)(Student*, KStrRef )> handlers = {
             {"name", &StudentManager::ModifyName},
             {"age", &StudentManager::ModifyAge},
             {"score", &StudentManager::ModifyScore},
@@ -88,34 +94,32 @@ namespace ms {
             }
             std::string err;
             handlers[key](*it, val);
-            log.info() << "modified: " << '\n' << *it << std::endl;
+            dirty_ = true;
+            auto& log = log_.Info();
+            log << "modified: ";
+            Student::PrintStudents(log, {*it});
         } catch (std::runtime_error& e) {
-            log.info() << "failed to modify: " << e.what() << std::endl;
+            log_.Error() << "failed to modify: " << e.what() << std::endl;
         }
     }
 
-    void StudentManager::ModifyName(Student *s, const std::string &val) {
-        s->set_name(val);
-    }
-
-    void StudentManager::ModifyAge(Student *s, const std::string &val) {
+    void StudentManager::Search(KStrRef type, KStrRef arg) const {
         try {
-            s->set_age(std::stoi(val));
-        } catch (std::exception&) {
-            throw std::runtime_error("invalid age: " + val);
+            Student::PrintStudents(log_.Info(), Searcher::SearchBy(students_, type, arg));
+        } catch (std::exception& e) {
+            log_.Error() << "failed to search type '" << type << "' with arg '" << arg << "':" << e.what();
         }
     }
 
-    void StudentManager::ModifyScore(Student *s, const std::string &val) {
+    void StudentManager::Sort(KStrRef type, bool print) {
         try {
-            s->set_score(std::stof(val));
-        } catch (std::exception&) {
-            throw std::runtime_error("invalid score: " + val);
+            Sorter::SortBy(students_, type);
+            if (print) {
+                Student::PrintStudents(log_.Info(), students_);
+            }
+        } catch (std::exception& e) {
+            log_.Error() << "failed to sort by type '" << type << "':" << e.what() << std::endl;
         }
-    }
-
-    void StudentManager::ModifyClazz(Student *s, const std::string &val) {
-        s->set_clazz(val);
     }
 
     void StudentManager::Close() {
@@ -126,18 +130,52 @@ namespace ms {
         students_ = {};
     }
 
-    void StudentManager::Save() const {
+    void StudentManager::Save() {
+        if (!dirty_) {
+            log_.Info() << "Everything uptodate" << std::endl;
+            return;
+        }
         std::ofstream os("students.dat", std::ios::binary);
         os << students_.size();
         for (const auto &val: students_) {
             os.write(reinterpret_cast<char*>(val), sizeof(Student));
         }
         os.close();
+        dirty_ = false;
+        log_.Info() << "Saved " << students_.size() << " records" << std::endl;
     }
 
-    Searcher::StuVec Searcher::SearchBy(const StuVec& src, const std::string &type, const std::string &key) {
-        typedef std::unordered_map<std::string, std::function<StuVec(const StuVec&, const std::string&)>> Searchers;
-        static Searchers searchers {
+    void StudentManager::Print() const {
+        Student::PrintStudents(log_.Info(), students_);
+    }
+
+    void StudentManager::ModifyName(Student *s, KStrRef val) {
+        s->set_name(val);
+    }
+
+    void StudentManager::ModifyAge(Student *s, KStrRef val) {
+        try {
+            s->set_age(val);
+        } catch (std::exception&) {
+            throw std::runtime_error("invalid age: " + val);
+        }
+    }
+
+    void StudentManager::ModifyScore(Student *s, KStrRef val) {
+        try {
+            s->set_score(val);
+        } catch (std::exception&) {
+            throw std::runtime_error("invalid score: " + val);
+        }
+    }
+
+    void StudentManager::ModifyClazz(Student *s, KStrRef val) {
+        s->set_clazz(val);
+    }
+
+    StuVec Searcher::SearchBy(const StuVec& src, KStrRef type, KStrRef key) {
+        typedef std::function<StuVec(const StuVec&, KStrRef )> Searcher;
+        static std::unordered_map<std::string, Searcher> searchers {
             {"id", &SearchById},
             {"name", &SearchByName},
             {"score", &SearchByScore},
@@ -149,43 +187,53 @@ namespace ms {
         return searchers[type](src, key);
     }
 
-    static int LevenshteinDistance(const std::string& s1, const std::string& s2) {
-        int rows = s1.length(), columns = s2.length();
-        int dp[rows][columns];
-        for (int i = 0; i < rows; ++i) {
-            dp[i][0] = i;
-        }
-        for (int j = 0; j < columns; ++j) {
-            dp[0][j] = j;
-        }
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                if (s1[i] == s2[j]) {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else {
-                    dp[i][j] = 1 + std::min({dp[i - 1][j], dp[i - 1][j - 1], dp[i][j - 1]});
-                }
-            }
-        }
-        return dp[rows - 1][columns - 1];
-    }
-
-    Searcher::StuVec Searcher::SearchById(const StuVec& src, const std::string &key) {
+    StuVec Searcher::Collect(const StuVec &src, KStrRef arg, const Predicate &pred) {
         StuVec result;
         for (const auto& s : src) {
-            if (LevenshteinDistance(s->get_id(), key) < 4) {
+            if (pred(*s, arg)) {
                 result.push_back(s);
             }
         }
         return result;
     }
 
-    std::vector<Student*> Searcher::SearchByName(const StuVec& src, const std::string &key) {
+    StuVec Searcher::SearchById(const StuVec& src, KStrRef key) {
+        return Collect(src, key, [](const auto& stu, const auto& s) {
+            auto id = stu.get_id();
+            return id.find(s) < id.size();
+        });
     }
 
-    std::vector<Student*> Searcher::SearchByScore(const StuVec& src, const std::string &key) {
+    std::vector<Student*> Searcher::SearchByName(const StuVec& src, KStrRef key) {
+        return Collect(src, key, [](const auto& stu, const auto& s) {
+            auto name = stu.get_name();
+            return name.find(s) < name.size();
+        });
     }
 
-    std::vector<Student*> Searcher::SearchByClass(const StuVec& src, const std::string &key) {
+    std::vector<Student*> Searcher::SearchByScore(const StuVec& src, KStrRef key) {
+        return Collect(src, key, [](const auto& stu, const auto& s) {
+            return std::abs(stu.get_score() - std::stoi(s)) < 10;
+        });
+    }
+
+    std::vector<Student*> Searcher::SearchByClass(const StuVec& src, KStrRef key) {
+        return Collect(src, key, [](const auto& stu, const auto& s) {
+            return stu.get_clazz() == s;
+        });
+    }
+
+    void Sorter::SortBy(StuVec& src, KStrRef type) {
+        typedef bool (*Comp)(const Student* a, const Student* b);
+        static std::unordered_map<std::string, Comp> sorters {
+            {"id", [](auto a, auto b){ return a->get_id() < b->get_id();}},
+            {"name", [](auto a, auto b){ return a->get_name() < b->get_name();}},
+            {"score", [](auto a, auto b){ return a->get_score() < b->get_score();}},
+            {"class", [](auto a, auto b){ return a->get_clazz() < b->get_clazz();}},
+        };
+        if (!sorters.contains(type)) {
+            throw std::runtime_error("invalid sorter '" + type + "'");
+        }
+        std::ranges::sort(src, sorters[type]);
     }
 }
