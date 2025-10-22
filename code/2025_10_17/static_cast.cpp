@@ -11,7 +11,7 @@ public:
 
 class Derived : public Base {
 public:
-    int val_derived = 20;
+    int val_derived_ = 20;
 };
 
 int main() {
@@ -19,5 +19,5 @@ int main() {
     Base* b = &d;
     std::cout << b->val_base_ << std::endl;
     auto* p = static_cast<Derived*>(b);
-    std::cout << p->val_derived << std::endl;
+    std::cout << p->val_derived_ << std::endl;
 }
