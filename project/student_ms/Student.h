@@ -5,7 +5,6 @@
 #ifndef DSA_STUDENT_H
 #define DSA_STUDENT_H
 
-#include <ostream>
 #include <string>
 #include <vector>
 

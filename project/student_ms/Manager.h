@@ -25,7 +25,6 @@ namespace ms {
         void Modify(KStrRef id, KStrRef key, KStrRef val);
         void Search(KStrRef type, KStrRef arg) const;
         void Sort(KStrRef type, bool print);
-        void Close();
         void Save();
         void Print() const;
     private:

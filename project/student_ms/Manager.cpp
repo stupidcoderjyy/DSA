@@ -7,11 +7,9 @@
 #include <iosfwd>
 #include <iostream>
 #include <ranges>
+#include <iomanip>
 
 #include "Manager.h"
-
-#include <algorithm>
-#include <iomanip>
 
 namespace ms {
 
@@ -21,7 +19,12 @@ namespace ms {
     }
 
     StudentManager::~StudentManager() {
-        Close();
+        Save();
+        for (const auto &s: students_) {
+            delete s;
+        }
+        students_ = {};
+        log_.Info() << "Leak: " << Student::allocated << " Objects" << std::endl;
     }
 
     void StudentManager::Load(KStrRef file) {
@@ -120,14 +123,6 @@ namespace ms {
         } catch (std::exception& e) {
             log_.Error() << "failed to sort by type '" << type << "':" << e.what() << std::endl;
         }
-    }
-
-    void StudentManager::Close() {
-        Save();
-        for (const auto &s: students_) {
-            delete s;
-        }
-        students_ = {};
     }
 
     void StudentManager::Save() {

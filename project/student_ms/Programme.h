@@ -23,7 +23,7 @@ namespace ms {
         std::unordered_map<std::string, CommandInfo> commands;
         Logger log_;
         StudentManager manager_;
-        void RegisterCommand(const CommandInfo& ci);
+        void RegisterCommand(CommandInfo ci);
         bool RunCommand(const std::string& cmd, const std::vector<std::string>& args);
         bool RunExit(const std::vector<std::string>& args);
         bool RunCreate(const std::vector<std::string>& args);

@@ -12,10 +12,10 @@ namespace ms {
 
     Programme::Programme() : log_("system.log"), manager_(log_) {
         RegisterCommand({"exit", 0, "", &Programme::RunExit});
-        RegisterCommand({"add",5,
+        RegisterCommand({"add", 5,
             "<id:string[1,10]> <name:string[1,20]> <age:int[0,INT_MAX]> <score:int[0,INT_MAX]> <class:A|B|C>",
             &Programme::RunCreate});
-        RegisterCommand({"mod",3,
+        RegisterCommand({"mod", 3,
             "<id:string[1,10]> <key:name|age|score|clazz> <val>",
             &Programme::RunModify});
         RegisterCommand({"find", 2, "<search_type:id|name|score|class> <arg>", &Programme::RunFind});
@@ -51,8 +51,8 @@ namespace ms {
         }
     }
 
-    void Programme::RegisterCommand(const CommandInfo &ci) {
-        commands[ci.cmd] = ci;
+    void Programme::RegisterCommand(CommandInfo ci) {
+        commands[ci.cmd] = std::move(ci);
     }
 
     bool Programme::RunCommand(const std::string &cmd, const std::vector<std::string> &args) {
@@ -77,8 +77,6 @@ namespace ms {
 
     bool Programme::RunExit(const std::vector<std::string> &args) {
         log_.Info() << "Closing ..." << std::endl;
-        manager_.Close();
-        log_.Info() << "Leak: " << Student::allocated << " Objects" << std::endl;
         return true;
     }
 

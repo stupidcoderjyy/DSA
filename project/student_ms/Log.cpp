@@ -5,10 +5,9 @@
 #include <cstdarg>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include "Log.h"
-
-#include <chrono>
 
 namespace ms {
 
