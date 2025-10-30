@@ -6,4 +6,5 @@
 
 int main() {
     ms::Programme().Exec();
+    return 0;
 }
